@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}新規登録{% endblock %}
+
+{% block content %}
+<h2>新規登録</h2>
+<form action="./signup" method="POST">
+    <p>
+        {{ form.email.label }}<br>
+        {{ form.email(size=32) }}<br>
+        {{ form.password.label}}<br>
+        {{ form.password(size=32) }}<br>
+        {{ form.repeatpassword.label}}<br>
+        {{ form.repeatpassword(size=32) }}<br>
+        {{ form.submit() }}
+    </p>
+</form>
+{% endblock %}
