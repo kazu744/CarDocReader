@@ -9,6 +9,8 @@ RUN apt-get update && \
 
 
 WORKDIR /app
+ENV FLASK_APP=app/app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 EXPOSE 8000 8001
 
 COPY ./requirements.txt /tmp/requirements.txt
