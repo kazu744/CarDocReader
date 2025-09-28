@@ -1,0 +1,18 @@
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Git
+.git
+.gitignore
+README.md
+
+# Environments
+.env/
+.venv/
+venv/
+
+# Python
+appserver/__pycache__/
+appserver/*/__pycache__/
+appserver/*/*/__pycache__/
