@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
+from db.base import Base, SessionLocal
 
-class User():
+class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key = True)
     email = Column(String(50), nullable=False)
@@ -16,4 +17,17 @@ class User():
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)    
+        return check_password_hash(self.password_hash, password)
+
+    @classmethod
+    def signup(cls, **kwargs):
+        new_user = cls(**kwargs)
+        try:
+            with SessionLocal() as session:
+                session.add(new_user)
+                session.commit()
+            return new_user
+        except Exception as e:
+            session.rollback()
+            print(f"エラーが発生しました。{e}")
+            return None

@@ -22,4 +22,8 @@ def load_user(user_id):
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
+    if form.validate_on_submit():
+        user = User.signup(form.email.data)
+        user.set_password(form.password.data)
+        
     return render_template('signup.html', form=form)
