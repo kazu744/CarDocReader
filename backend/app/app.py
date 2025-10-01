@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager
 from flask_wtf import CSRFProtect
 from . import settings
@@ -23,7 +23,11 @@ def load_user(user_id):
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        user = User.signup(form.email.data)
-        user.set_password(form.password.data)
-        
+        new_user = User.signup(
+            email = form.email.data,
+            password_hash = User.set_password
+            )
+        if new_user:
+            flash("登録完了しました")
+            return redirect(url_for('login'))
     return render_template('signup.html', form=form)

@@ -3,7 +3,6 @@
 {% block title %}新規登録{% endblock %}
 
 {% block content %}
-<center>
 <h2>新規登録</h2>
     <form action="./signup" method="POST">
         {{ form.hidden_tag() }}
@@ -12,10 +11,9 @@
             {{ form.email(size=32) }}<br>
             {{ form.password.label}}<br>
             {{ form.password(size=32) }}<br>
-            {{ form.repeatpassword.label}}<br>
-            {{ form.repeatpassword(size=32) }}<br>
+            {{ form.confirm_password.label}}<br>
+            {{ form.confirm_password(size=32) }}<br>
             {{ form.submit() }}
         </p>
     </form>
-</center>
 {% endblock %}

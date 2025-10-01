@@ -1,11 +1,11 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
-from db.base import Base, SessionLocal
+from app.db.base import Base, SessionLocal
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key = True)
-    email = Column(String(50), nullable=False)
+    id = Column(Integer, primary_key=True)
+    email = Column(String(50), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     vision_api = Column(Text)
     openai_api = Column(Text)
