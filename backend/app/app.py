@@ -25,7 +25,7 @@ def signup():
     if form.validate_on_submit():
         new_user = User.signup(
             email = form.email.data,
-            password_hash = User.set_password
+            password = form.password.data
             )
         if new_user:
             flash("登録完了しました")

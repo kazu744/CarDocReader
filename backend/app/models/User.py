@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.db.base import Base, SessionLocal
@@ -9,7 +10,7 @@ class User(Base):
     password_hash = Column(String(255), nullable=False)
     vision_api = Column(Text)
     openai_api = Column(Text)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.now, nullable=False)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
 
@@ -20,8 +21,9 @@ class User(Base):
         return check_password_hash(self.password_hash, password)
 
     @classmethod
-    def signup(cls, **kwargs):
+    def signup(cls, password, **kwargs):
         new_user = cls(**kwargs)
+        new_user.set_password(password)
         try:
             with SessionLocal() as session:
                 session.add(new_user)
