@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title%}CarDoc Reader{% endblock %}</title>
+</head>
+<body>
+    <div class = "header">
+        {% block header %}
+        <nav>
+            {% if current_user.is_authenticated %}
+            <a href="./home">HOME</a></li>
+            <a href="./logout">ログアウト</a>
+            {% endif %}
+        </nav>
+        {% endblock %}
+    </div>
+    <main>{% block content %}{% endblock%}</main>
+    <div class = "footer">
+        {% block footer %}{% endblock %}
+    </div>
+</body>
+</html>
