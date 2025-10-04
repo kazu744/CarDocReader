@@ -13,7 +13,8 @@
             {{ form.password(size=32) }}<br>
             {{ form.confirm_password.label}}<br>
             {{ form.confirm_password(size=32) }}<br>
-            {{ form.submit() }}
+            {{ form.submit() }}<br>
+            すでに登録済の方は<a href="./login">こちら</a>
         </p>
     </form>
 {% endblock %}

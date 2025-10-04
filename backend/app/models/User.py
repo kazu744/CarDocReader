@@ -1,9 +1,10 @@
 from datetime import datetime
+from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.db.base import Base, SessionLocal
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email = Column(String(50), unique=True, nullable=False)
@@ -33,3 +34,13 @@ class User(Base):
             session.rollback()
             print(f"エラーが発生しました。{e}")
             return None
+        
+    @classmethod
+    def get_by_email(cls, email):
+        with SessionLocal() as session:
+            return session.query(cls).filter(cls.email == email).first()
+        
+    @classmethod
+    def get_by_id(cls, id):
+        with SessionLocal() as session:
+            return session.query(cls).filter(cls.id == id).first()

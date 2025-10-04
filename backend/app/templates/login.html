@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}ログイン{% endblock %}
+
+{% block content %}
+<h2>ログイン</h2>
+<form action="./login" method="POST">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.email.label }}<br>
+        {{ form.email(size=32) }}<br>
+        {{ form.password.label }}<br>
+        {{ form.password(size=32) }}<br>
+        {{ form.submit }}<br>
+        登録がまだの方は<a href="./signup">こちら</a>
+    </p>
+</form>
+{% endblock%}
