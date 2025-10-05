@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}プロフィール編集{% endblock %}
+
+{% block content %}
+<h2>プロフィール編集</h2>
+<form action="./profile_edit" method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.email.label }}<br>
+    {{ form.email(size=32) }}<br>
+    {{ form.password.label }}<br>
+    {{ form.password(size=32, placeholder="********") }}<br>
+    {{ form.confirm_password.label}}<br>
+    {{ form.confirm_password(size=32) }}<br>
+    {{ form.vision_api.label }}<br>
+    {{ form.vision_api(size=32) }}<br>
+    {{ form.openai_api.label }}<br>
+    {{ form.openai_api(size=32) }}<br>
+    {{ form.submit }}
+    <button onclick="location.href='./profile'">戻る</button>
+</form>
+{% endblock %}

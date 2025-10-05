@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}プロフィール{% endblock %}
+
+{% block content %}
+<h2>プロフィール</h2>
+    <p>
+    メールアドレス<br>
+    {{ user.email }}<br>
+    Google Vision API<br>
+    {{ user.vision_api}}<br>
+    OpenAI API<br>
+    {{ user.openai_api }}<br>
+    </p>
+<button onclick="location.href='./profile_edit'">編集</button>
+{% endblock %}

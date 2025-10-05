@@ -36,6 +36,23 @@ class User(Base, UserMixin):
             return None
         
     @classmethod
+    def profile_edit(cls, user_id, password, **kwargs):
+        try:
+            with SessionLocal() as session:
+                edit_user = session.get(cls, user_id)
+                if password:
+                    edit_user.set_password(password)
+                for key, value in kwargs.items():
+                    setattr(edit_user, key, value)
+                session.commit()
+                session.refresh(edit_user)
+            return edit_user
+        except Exception as e:
+            session.rollback()
+            print(f"エラーが発生しました。{e}")
+            return None
+        
+    @classmethod
     def get_by_email(cls, email):
         with SessionLocal() as session:
             return session.query(cls).filter(cls.email == email).first()

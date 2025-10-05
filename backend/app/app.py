@@ -1,9 +1,9 @@
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, flash
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask import Flask, render_template, redirect, url_for, flash, request
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from . import settings
-from app.form import SignupForm, LoginForm
+from app.form import SignupForm, LoginForm, ProfileEditForm
 from app.models.User import User
 
 app = Flask(__name__)
@@ -57,3 +57,29 @@ def logout():
     logout_user()
     flash('ログアウトしました。')
     return redirect(url_for('login'))
+
+@app.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)
+
+@app.route('/profile_edit', methods=['GET', 'POST'])
+@login_required
+def profile_edit():
+    form = ProfileEditForm(obj=current_user)
+    print(form.vision_api.data)
+    if form.validate_on_submit():
+        print("バリデーション成功!")
+        print(f"フォームのデータ: vision_api={form.vision_api.data}, openai_api={form.openai_api.data}")
+        form.populate_obj(current_user)
+        User.profile_edit(
+            user_id=current_user.id,
+            email=form.email.data,
+            password=form.password.data,
+            vision_api=form.vision_api.data,
+            openai_api=form.openai_api.data,
+        )
+        return redirect(url_for('profile'))
+    else:
+        print(f"{form.errors}")
+    return render_template('profile_edit.html', user=current_user, form=form)
