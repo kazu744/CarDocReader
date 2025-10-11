@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from . import settings
-from app.form import SignupForm, LoginForm, ProfileEditForm
+from app.form import SignupForm, LoginForm, ProfileEditForm, UploadForm
 from app.models.User import User
 
 app = Flask(__name__)
@@ -83,3 +83,8 @@ def profile_edit():
     else:
         print(f"{form.errors}")
     return render_template('profile_edit.html', user=current_user, form=form)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    form = UploadForm()
+    return render_template('upload.html', form=form)
