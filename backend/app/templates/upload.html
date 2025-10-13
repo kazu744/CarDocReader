@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}アップロード{% endblock %}
+
+{% block content %}
+
+<form action="./upload" method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <h2>アップロード</h2>
+    {{ form.new_owner_inkan.label }} <br>
+    {{ form.new_owner_inkan }} <br>
+    {{ form.submit() }}
+</form>
+
+{% endblock %}

@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import EmailField, PasswordField, SubmitField, TextAreaField, ValidationError
 from wtforms.validators import DataRequired, Length, EqualTo
 
@@ -24,3 +25,7 @@ class ProfileEditForm(FlaskForm):
     def validate_password(self, password):
         if password.data and len(password.data) < 8:
             raise ValidationError("8文字以上で入力してください")
+        
+class UploadForm(FlaskForm):
+    new_owner_inkan = FileField("新所有者印鑑証明", validators=[FileAllowed(['png', 'jpeg', 'jpg', 'pdf'], 'PDF/PNG/JPEGのみアップロード可能です')])
+    submit = SubmitField("アップロード")
