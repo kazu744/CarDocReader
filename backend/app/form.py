@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, SubmitField, TextAreaField, FileField,ValidationError, FileAllowed
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import EmailField, PasswordField, SubmitField, TextAreaField, ValidationError
 from wtforms.validators import DataRequired, Length, EqualTo
 
 class SignupForm(FlaskForm):
@@ -26,5 +27,5 @@ class ProfileEditForm(FlaskForm):
             raise ValidationError("8文字以上で入力してください")
         
 class UploadForm(FlaskForm):
-    inkanshomei = FileField("印鑑証明", validators=[FileAllowed(['png', 'jpeg', 'jpg', 'pdf'])])
+    new_owner_inkan = FileField("新所有者印鑑証明", validators=[FileAllowed(['png', 'jpeg', 'jpg', 'pdf'], 'PDF/PNG/JPEGのみアップロード可能です')])
     submit = SubmitField("アップロード")

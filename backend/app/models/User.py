@@ -25,20 +25,20 @@ class User(Base, UserMixin):
     def signup(cls, password, **kwargs):
         new_user = cls(**kwargs)
         new_user.set_password(password)
-        try:
-            with SessionLocal() as session:
+        with SessionLocal() as session:
+            try:
                 session.add(new_user)
                 session.commit()
-            return new_user
-        except Exception as e:
-            session.rollback()
-            print(f"エラーが発生しました。{e}")
-            return None
+                return new_user
+            except Exception as e:
+                session.rollback()
+                print(f"エラーが発生しました。{e}")
+                return None
         
     @classmethod
     def profile_edit(cls, user_id, password, **kwargs):
-        try:
-            with SessionLocal() as session:
+        with SessionLocal() as session:
+            try:
                 edit_user = session.get(cls, user_id)
                 if password:
                     edit_user.set_password(password)
@@ -46,11 +46,11 @@ class User(Base, UserMixin):
                     setattr(edit_user, key, value)
                 session.commit()
                 session.refresh(edit_user)
-            return edit_user
-        except Exception as e:
-            session.rollback()
-            print(f"エラーが発生しました。{e}")
-            return None
+                return edit_user
+            except Exception as e:
+                session.rollback()
+                print(f"エラーが発生しました。{e}")
+                return None
         
     @classmethod
     def get_by_email(cls, email):
@@ -61,3 +61,5 @@ class User(Base, UserMixin):
     def get_by_id(cls, id):
         with SessionLocal() as session:
             return session.query(cls).filter(cls.id == id).first()
+        
+    

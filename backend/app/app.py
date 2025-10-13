@@ -1,10 +1,14 @@
+import json
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from . import settings
 from app.form import SignupForm, LoginForm, ProfileEditForm, UploadForm
 from app.models.User import User
+from app.models.Ocr import Ocr
+from app.ocr.cloud_vision import detect_text_from_image
+from app.openai.openai import extract_structure_data_from_text
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = settings.SECRET_KEY
@@ -12,6 +16,13 @@ csrf = CSRFProtect(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "pdf"}
+MAX_FILE_SIZE_MB = 10
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def hello():
     return "Hello, World!"
@@ -67,10 +78,7 @@ def profile():
 @login_required
 def profile_edit():
     form = ProfileEditForm(obj=current_user)
-    print(form.vision_api.data)
     if form.validate_on_submit():
-        print("バリデーション成功!")
-        print(f"フォームのデータ: vision_api={form.vision_api.data}, openai_api={form.openai_api.data}")
         form.populate_obj(current_user)
         User.profile_edit(
             user_id=current_user.id,
@@ -85,6 +93,61 @@ def profile_edit():
     return render_template('profile_edit.html', user=current_user, form=form)
 
 @app.route('/upload', methods=['GET', 'POST'])
+@login_required
 def upload():
     form = UploadForm()
-    return render_template('upload.html', form=form)
+    if request.method == 'GET':
+        return render_template('upload.html', form=form)
+    
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = current_user
+            if not user.vision_api or not user.openai_api:
+                return "エラー: APIキーが設定されていません"
+            
+        results = []
+        ocr_texts = {}
+
+        files = {
+            "new_owner_inkan": form.new_owner_inkan.data
+        }
+
+        for doc_type, file in files.items():
+            if not files or not getattr(file, "filename", None):
+                continue
+
+            if not allowed_file(file.filename):
+                results.append({"type": doc_type, "status": "error", "message": "拡張子が無効です"})
+                continue
+
+            contents = file.read()
+            if len(contents) / (1024 * 1024) > MAX_FILE_SIZE_MB:
+                results.append({"type": doc_type, "status": "error", "message": "ファイルのサイズが大きすぎます。"})
+                continue
+
+            try:
+                ocr_result = detect_text_from_image(contents, vision_api=current_user.vision_api)
+                ocr_texts[doc_type] = ocr_result
+            except Exception as err:
+                results.append({"type": doc_type, "status": "error", "message": str(err)})
+
+            try:
+                structured = extract_structure_data_from_text(
+                    ocr_texts, openai_api=current_user.openai_api
+                )
+                record = Ocr.create(
+                    user_id=current_user.id,
+                    raw_text=json.dumps(ocr_texts, ensure_ascii=False),
+                    **structured,
+                    created_at=datetime.now(),
+                )
+
+                results.append({"status": "success", "id": record.id})
+                return redirect(url_for('home'))
+            except Exception as err:
+                results.append({"status": "error", "message": str(err)})
+        
+        if not results:
+            return f"エラー: ファイルが選択されていません"
+        
+        return jsonify(results)

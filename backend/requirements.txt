@@ -4,3 +4,5 @@ flask_wtf
 mysql-connector-python
 sqlalchemy
 python-dotenv
+openai
+requests
