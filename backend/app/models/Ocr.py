@@ -28,3 +28,8 @@ class Ocr(Base):
             except Exception as e:
                 print(f"エラーが発生しました。{e}")
                 return None
+            
+    @classmethod
+    def get_by_user_id(cls, user_id):
+        with SessionLocal() as session:
+            return session.query(cls).filter(cls.user_id == user_id, cls.deleted_at.is_(None)).all()
