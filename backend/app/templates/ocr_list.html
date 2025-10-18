@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}一覧表示{% endblock %}
+
+{% block content %}
+<h2>一覧表示</h2>
+{% if ocrs %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>案件ID</th>
+            <th>新所有者名</th>
+            <th>新所有者住所</th>
+            <th>新所有者丁目</th>
+            <th>新所有者番地</th>
+            <th>作成日時</th>
+            <th>更新日時</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ocr in ocrs %}
+        <tr>
+            <td>{{ ocr.id }}</td>
+            <td>{{ ocr.new_owner_name }}</td>
+            <td>{{ ocr.new_owner_address_main }}</td>
+            <td>{{ ocr.new_owner_address_street }}</td>
+            <td>{{ ocr.new_owner_address_number }}</td>
+            <td>{{ ocr.created_at }}</td>
+            <td>{{ ocr.updated_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+{% endif%}
+{% endblock %}

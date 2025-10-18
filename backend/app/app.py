@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, abort
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from . import settings
@@ -143,7 +143,7 @@ def upload():
                 )
 
                 results.append({"status": "success", "id": record.id})
-                return redirect(url_for('home'))
+                return redirect(url_for('show_ocr'))
             except Exception as err:
                 results.append({"status": "error", "message": str(err)})
         
@@ -151,3 +151,9 @@ def upload():
             return f"エラー: ファイルが選択されていません"
         
         return jsonify(results)
+    
+@app.route("/ocr_list/", methods=['GET'])
+@login_required
+def show_ocr():
+    ocrs = Ocr.get_by_user_id(user_id=current_user.id)
+    return render_template('ocr_list.html', ocrs=ocrs)
