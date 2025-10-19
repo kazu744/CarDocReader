@@ -27,6 +27,10 @@
             <td>{{ ocr.new_owner_address_number }}</td>
             <td>{{ ocr.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
             <td>{{ ocr.updated_at.strftime("%Y-%m-%d %H:%M:%S") if ocr.updated_at else "" }}</td>
+            <td><form action="{{ url_for('delete_ocr', ocr_id=ocr.id )}}" method="POST">
+                {{ form.hidden_tag() }}
+                <button type="submit">削除</button><br>
+            </form></td>
         </tr>
         {% endfor %}
     </tbody>

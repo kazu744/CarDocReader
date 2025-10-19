@@ -55,3 +55,18 @@ class Ocr(Base):
                 session.rollback()
                 print(f"エラー発生しました。{err}")
                 return False
+            
+    @classmethod
+    def delete(cls, ocr_id):
+        with SessionLocal() as session:
+            try:
+                delete_ocr = session.get(cls, ocr_id)
+                if delete_ocr is None:
+                    return None
+                session.delete(delete_ocr)
+                session.commit()
+                return True
+            except Exception as err:
+                session.rollback()
+                print(f"エラーが発生しました{err}")
+                return False

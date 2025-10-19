@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, jso
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from . import settings
-from app.form import SignupForm, LoginForm, ProfileEditForm, UploadForm, OcrEditForm
+from app.form import SignupForm, LoginForm, ProfileEditForm, UploadForm, OcrEditForm, OcrDeleteForm
 from app.models.User import User
 from app.models.Ocr import Ocr
 from app.ocr.cloud_vision import detect_text_from_image
@@ -156,7 +156,8 @@ def upload():
 @login_required
 def show_ocr_list():
     ocrs = Ocr.get_by_user_id(user_id=current_user.id)
-    return render_template('ocr_list.html', ocrs=ocrs)
+    form = OcrDeleteForm()
+    return render_template('ocr_list.html', ocrs=ocrs, form=form)
 
 @app.route("/ocr_list/<int:ocr_id>/edit", methods=['GET', 'POST'])
 @login_required
@@ -180,3 +181,17 @@ def edit_ocr(ocr_id):
     else:
         print(f"{form.errors}")
     return render_template('edit_ocr.html', form=form, ocr=ocr)
+
+@app.route("/ocr_list/<int:ocr_id>/delete", methods=['POST'])
+@login_required
+def delete_ocr(ocr_id):
+    form = OcrDeleteForm()
+    if not form.validate_on_submit():
+        abort(400)
+    ocr = Ocr.get_by_id(ocr_id)
+    if not ocr:
+        abort(404)
+    result = Ocr.delete(ocr_id)
+    if not result:
+        abort(500)
+    return redirect(url_for('show_ocr_list'))
