@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}案件編集{% endblock %}
+
+{% block content %}
+<h2>案件編集</h2>
+    <form action="{{ url_for('edit_ocr', ocr_id=ocr.id)}}" method="POST">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.new_owner_name.label }} <br>
+            {{ form.new_owner_name(size=32) }} <br>
+            {{ form.new_owner_address_main.label }} <br>
+            {{ form.new_owner_address_main(size=32) }} <br>
+            {{ form.new_owner_address_street.label }} <br>
+            {{ form.new_owner_address_street(size=32) }} <br>
+            {{ form.new_owner_address_number.label }} <br>
+            {{ form.new_owner_address_number(size=32) }} <br>
+            {{ form.submit() }}<br>
+            <a href="/ocr_list/">一覧へ戻る</a>
+        </p>
+        
+    </form>
+{% endblock%}

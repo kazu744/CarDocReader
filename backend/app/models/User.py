@@ -47,9 +47,9 @@ class User(Base, UserMixin):
                 session.commit()
                 session.refresh(edit_user)
                 return edit_user
-            except Exception as e:
+            except Exception as err:
                 session.rollback()
-                print(f"エラーが発生しました。{e}")
+                print(f"エラーが発生しました。{err}")
                 return None
         
     @classmethod

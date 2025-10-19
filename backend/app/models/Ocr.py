@@ -33,3 +33,25 @@ class Ocr(Base):
     def get_by_user_id(cls, user_id):
         with SessionLocal() as session:
             return session.query(cls).filter(cls.user_id == user_id, cls.deleted_at.is_(None)).all()
+        
+    @classmethod
+    def get_by_id(cls, ocr_id):
+        with SessionLocal() as session:
+            return session.query(cls).filter(cls.id == ocr_id).first()
+        
+    @classmethod
+    def update(cls, ocr_id: int, **kwargs):
+        with SessionLocal() as session:
+            try:
+                edit_ocr = session.get(cls, ocr_id)
+                if edit_ocr is None:
+                    return None
+                for key, value in kwargs.items():
+                    setattr(edit_ocr, key, value)
+                session.commit()
+                session.refresh(edit_ocr)
+                return edit_ocr
+            except Exception as err:
+                session.rollback()
+                print(f"エラー発生しました。{err}")
+                return False
