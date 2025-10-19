@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, jso
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from . import settings
-from app.form import SignupForm, LoginForm, ProfileEditForm, UploadForm
+from app.form import SignupForm, LoginForm, ProfileEditForm, UploadForm, OcrEditForm
 from app.models.User import User
 from app.models.Ocr import Ocr
 from app.ocr.cloud_vision import detect_text_from_image
@@ -143,7 +143,7 @@ def upload():
                 )
 
                 results.append({"status": "success", "id": record.id})
-                return redirect(url_for('show_ocr'))
+                return redirect(url_for('show_ocr_list'))
             except Exception as err:
                 results.append({"status": "error", "message": str(err)})
         
@@ -154,6 +154,29 @@ def upload():
     
 @app.route("/ocr_list/", methods=['GET'])
 @login_required
-def show_ocr():
+def show_ocr_list():
     ocrs = Ocr.get_by_user_id(user_id=current_user.id)
     return render_template('ocr_list.html', ocrs=ocrs)
+
+@app.route("/ocr_list/<int:ocr_id>/edit", methods=['GET', 'POST'])
+@login_required
+def edit_ocr(ocr_id):
+    ocr = Ocr.get_by_id(ocr_id)
+    form = OcrEditForm(obj=ocr)
+    if not ocr:
+        abort(404)
+    
+    if form.validate_on_submit():
+        form.populate_obj(ocr)
+        Ocr.update(
+            ocr_id=ocr_id,
+            user_id=current_user.id,
+            new_owner_name=form.new_owner_name.data,
+            new_owner_address_main=form.new_owner_address_main.data,
+            new_owner_address_street=form.new_owner_address_street.data,
+            new_owner_address_number=form.new_owner_address_number.data,
+        )
+        return redirect(url_for('show_ocr_list'))
+    else:
+        print(f"{form.errors}")
+    return render_template('edit_ocr.html', form=form, ocr=ocr)

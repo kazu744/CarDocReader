@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import EmailField, PasswordField, SubmitField, TextAreaField, ValidationError
+from wtforms import EmailField, PasswordField, SubmitField, TextAreaField, StringField,ValidationError
 from wtforms.validators import DataRequired, Length, EqualTo
 
 class SignupForm(FlaskForm):
@@ -29,3 +29,10 @@ class ProfileEditForm(FlaskForm):
 class UploadForm(FlaskForm):
     new_owner_inkan = FileField("新所有者印鑑証明", validators=[FileAllowed(['png', 'jpeg', 'jpg', 'pdf'], 'PDF/PNG/JPEGのみアップロード可能です')])
     submit = SubmitField("アップロード")
+
+class OcrEditForm(FlaskForm):
+    new_owner_name = StringField("新所有者氏名")
+    new_owner_address_main = StringField("新所有者住所")
+    new_owner_address_street = StringField("新所有者丁目")
+    new_owner_address_number = StringField("新所有者番地")
+    submit = SubmitField("更新")

@@ -20,15 +20,19 @@
     <tbody>
         {% for ocr in ocrs %}
         <tr>
-            <td>{{ ocr.id }}</td>
+            <td><a href="{{ url_for('edit_ocr', ocr_id=ocr.id) }}">{{ ocr.id }}</a></td>
             <td>{{ ocr.new_owner_name }}</td>
             <td>{{ ocr.new_owner_address_main }}</td>
             <td>{{ ocr.new_owner_address_street }}</td>
             <td>{{ ocr.new_owner_address_number }}</td>
-            <td>{{ ocr.created_at }}</td>
-            <td>{{ ocr.updated_at }}</td>
+            <td>{{ ocr.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+            <td>{{ ocr.updated_at.strftime("%Y-%m-%d %H:%M:%S") if ocr.updated_at else "" }}</td>
         </tr>
         {% endfor %}
     </tbody>
+    {% else %}
+    <p>まだ案件データがありません。</p>
+</table>
 {% endif%}
 {% endblock %}
+
