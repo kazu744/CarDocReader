@@ -36,3 +36,6 @@ class OcrEditForm(FlaskForm):
     new_owner_address_street = StringField("新所有者丁目")
     new_owner_address_number = StringField("新所有者番地")
     submit = SubmitField("更新")
+
+class OcrDeleteForm(FlaskForm):
+    pass
