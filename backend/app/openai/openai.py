@@ -24,7 +24,7 @@ def extract_structure_data_from_text(
         ・以下のjsonフォーマットにしてください：
         {{
             "new_owner_name": "田中　太郎", 
-            "new_owner_address_main": "兵庫県姫路市香寺町", 
+            "new_owner_address_main": "兵庫県姫路市香寺町岩部", 
             "new_owner_address_street": "1", 
             "new_owner_address_number": "96-1-301"
         }}
