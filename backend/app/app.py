@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, abort
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, abort, send_file
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import CSRFProtect
 from . import settings
@@ -9,6 +9,8 @@ from app.models.User import User
 from app.models.Ocr import Ocr
 from app.ocr.cloud_vision import detect_text_from_image
 from app.openai.openai import extract_structure_data_from_text
+from openpyxl import Workbook
+from io import BytesIO
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = settings.SECRET_KEY
@@ -152,14 +154,14 @@ def upload():
         
         return jsonify(results)
     
-@app.route("/ocr_list/", methods=['GET'])
+@app.route('/ocr_list/', methods=['GET'])
 @login_required
 def show_ocr_list():
     ocrs = Ocr.get_by_user_id(user_id=current_user.id)
     form = OcrDeleteForm()
     return render_template('ocr_list.html', ocrs=ocrs, form=form)
 
-@app.route("/ocr_list/<int:ocr_id>/edit", methods=['GET', 'POST'])
+@app.route('/ocr_list/<int:ocr_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_ocr(ocr_id):
     ocr = Ocr.get_by_id(ocr_id)
@@ -182,7 +184,7 @@ def edit_ocr(ocr_id):
         print(f"{form.errors}")
     return render_template('edit_ocr.html', form=form, ocr=ocr)
 
-@app.route("/ocr_list/<int:ocr_id>/delete", methods=['POST'])
+@app.route('/ocr_list/<int:ocr_id>/delete', methods=['POST'])
 @login_required
 def delete_ocr(ocr_id):
     form = OcrDeleteForm()
@@ -195,3 +197,35 @@ def delete_ocr(ocr_id):
     if not result:
         abort(500)
     return redirect(url_for('show_ocr_list'))
+
+@app.route('/export', methods=['POST'])
+@login_required
+def export():
+        ocr_ids = request.form.getlist('ocr_ids')
+        if not ocr_ids:
+            return "エラー: データが反映されていません", 400
+        
+        output = BytesIO()
+        wb = Workbook()
+        ws = wb.active
+
+        ws.append(["案件ID", "新所有者名", "新所有者住所", "新所有者丁目", "新所有者番地"])
+
+        for ocr_id in ocr_ids:
+            ocr = Ocr.get_by_id(ocr_id)
+            if ocr:
+                ws.append([
+                    ocr.id,
+                    ocr.new_owner_name,
+                    ocr.new_owner_address_main,
+                    ocr.new_owner_address_street,
+                    ocr.new_owner_address_number,
+                ])
+        
+        wb.save(output)
+        output.seek(0)
+        wb.close()
+
+        filename  = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        
+        return send_file(output, download_name=filename, as_attachment=True, mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
