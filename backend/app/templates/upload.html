@@ -16,4 +16,35 @@
     </div>
   </form>
 </div>
+
+<script>
+  var filerAea = document.getElementById('upload-file')
+  var fileinput = document.getElementById('new_owner_inkan')
+
+  fileArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    fileArea.classList.add('dragover')
+  });
+
+  fileArea.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    fileArea.classList.remove('dragover')
+  });
+
+  fileArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    fileAea.classList.remove('dragover')
+
+    var files = e.dataTransfer.files;
+
+    fileInput.files = files
+
+    if (typeof file[0] !== 'undefined') {
+    } else {
+    }
+  });
+
+  
+
+</script>
 {% endblock %}
