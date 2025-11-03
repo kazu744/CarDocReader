@@ -11,9 +11,14 @@ from app.ocr.cloud_vision import detect_text_from_image
 from app.openai.openai import extract_structure_data_from_text
 from openpyxl import Workbook
 from io import BytesIO
+from cryptography.fernet import Fernet
+from app.utils.encryption import encrypt_api_key, decrypt_api_key
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = settings.SECRET_KEY
+app.config["FERNET_KEY"] = settings.FERNET_KEY
+app.fernet = Fernet(app.config["FERNET_KEY"])
 csrf = CSRFProtect(app)
 
 login_manager = LoginManager()
@@ -80,14 +85,18 @@ def profile():
 @login_required
 def profile_edit():
     form = ProfileEditForm(obj=current_user)
+
+    vision_api_encrypted = encrypt_api_key(form.vision_api.data)
+    openai_api_encrypted = encrypt_api_key(form.openai_api.data)
+
     if form.validate_on_submit():
         form.populate_obj(current_user)
         User.profile_edit(
             user_id=current_user.id,
             email=form.email.data,
             password=form.password.data,
-            vision_api=form.vision_api.data,
-            openai_api=form.openai_api.data,
+            vision_api=vision_api_encrypted,
+            openai_api=openai_api_encrypted,
         )
         return redirect(url_for('profile'))
     else:
@@ -107,9 +116,18 @@ def upload():
             if not user.vision_api or not user.openai_api:
                 return "エラー: APIキーが設定されていません"
             
+            try:
+                vision_api_key = decrypt_api_key(user.vision_api)
+                openai_api_key = decrypt_api_key(user.openai_api)
+            except Exception as e:
+                return f"APIキーの復号に失敗しました: {e}"
+        
+        print("vision_api_key:", vision_api_key[:5])
+        print("openai_api_key:", openai_api_key[:5])
+
         results = []
         ocr_texts = {}
-
+        
         files = {
             "new_owner_inkan": form.new_owner_inkan.data
         }
@@ -128,14 +146,14 @@ def upload():
                 continue
 
             try:
-                ocr_result = detect_text_from_image(contents, vision_api=current_user.vision_api)
+                ocr_result = detect_text_from_image(contents, vision_api=vision_api_key)
                 ocr_texts[doc_type] = ocr_result
             except Exception as err:
                 results.append({"type": doc_type, "status": "error", "message": str(err)})
 
             try:
                 structured = extract_structure_data_from_text(
-                    ocr_texts, openai_api=current_user.openai_api
+                    ocr_texts, openai_api=openai_api_key
                 )
                 record = Ocr.create(
                     user_id=current_user.id,
@@ -145,6 +163,7 @@ def upload():
                 )
 
                 results.append({"status": "success", "id": record.id})
+                print("structured:", structured)
                 return redirect(url_for('show_ocr_list'))
             except Exception as err:
                 results.append({"status": "error", "message": str(err)})

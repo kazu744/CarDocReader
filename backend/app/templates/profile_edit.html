@@ -9,13 +9,13 @@
     {{ form.email.label }}<br>
     {{ form.email(size=32) }}<br>
     {{ form.password.label }}<br>
-    {{ form.password(size=32, placeholder="********") }}<br>
+    {{ form.password(size=32, placeholder="****************") }}<br>
     {{ form.confirm_password.label}}<br>
     {{ form.confirm_password(size=32) }}<br>
     {{ form.vision_api.label }}<br>
-    {{ form.vision_api(size=32) }}<br>
+    {{ form.vision_api(size=32, placeholder="****************", autocomplete="new-password") }}<br>
     {{ form.openai_api.label }}<br>
-    {{ form.openai_api(size=32) }}<br>
+    {{ form.openai_api(size=32, placeholder="****************", autocomplete="new-password") }}<br>
     {{ form.submit }}
     <button onclick="location.href='./profile'">戻る</button>
 </form>
