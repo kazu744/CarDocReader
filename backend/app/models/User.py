@@ -3,14 +3,15 @@ from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.db.base import Base, SessionLocal
+from app.utils.encryption import encrypt_api_key, decrypt_api_key
 
 class User(Base, UserMixin):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email = Column(String(50), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
-    vision_api = Column(Text)
-    openai_api = Column(Text)
+    vision_api = Column(String(255))
+    openai_api = Column(String(255))
     created_at = Column(DateTime, default=datetime.now, nullable=False)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
@@ -43,6 +44,20 @@ class User(Base, UserMixin):
                 if password:
                     edit_user.set_password(password)
                 for key, value in kwargs.items():
+                    if key in ["vision_api", "openai_api"]:
+                        if value == "" or value is None:
+                            continue
+                        try:
+                            plaintext = decrypt_api_key(value)
+                            if plaintext == "":
+                                continue
+                            safe_value = value
+                        except Exception:
+                            safe_value = encrypt_api_key(value)
+                        setattr(edit_user, key, safe_value)
+                        continue
+                    if value == "" or value is None:
+                        continue
                     setattr(edit_user, key, value)
                 session.commit()
                 session.refresh(edit_user)

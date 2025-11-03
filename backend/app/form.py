@@ -22,8 +22,8 @@ class ProfileEditForm(FlaskForm):
     email = EmailField("メールアドレス", validators=[DataRequired()])
     password = PasswordField("パスワード")
     confirm_password = PasswordField("パスワード再入力", validators=[EqualTo("password")])
-    vision_api = TextAreaField("Vision API")
-    openai_api = TextAreaField("OpenAI API")
+    vision_api = PasswordField("Vision API")
+    openai_api = PasswordField("OpenAI API")
     submit = SubmitField('更新')
 
     def validate_password(self, password):
