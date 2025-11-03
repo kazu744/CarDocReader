@@ -31,6 +31,7 @@ ul li{
   border-style: dotted;
   border-radius: 8px;
   padding: 20px 80px;
+  margin: 5px 0 5px 0;
 }
 
 .login-container {
