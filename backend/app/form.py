@@ -9,6 +9,10 @@ class SignupForm(FlaskForm):
     confirm_password = PasswordField("パスワード再入力", validators=[DataRequired(), EqualTo("password")])
     submit = SubmitField('登録')
 
+    def validate_password(self, password):
+        if password.data and len(password.data) < 8:
+            raise ValidationError("8文字以上で入力してください")
+        
 class LoginForm(FlaskForm):
     email = EmailField("メールアドレス", validators=[DataRequired()])
     password = PasswordField("パスワード", validators=[DataRequired()])

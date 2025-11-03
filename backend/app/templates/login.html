@@ -3,16 +3,20 @@
 {% block title %}ログイン{% endblock %}
 
 {% block content %}
-<h2>ログイン</h2>
-<form action="./login" method="POST">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.email.label }}<br>
-        {{ form.email(size=32) }}<br>
-        {{ form.password.label }}<br>
-        {{ form.password(size=32) }}<br>
-        {{ form.submit() }}<br>
-        登録がまだの方は<a href="./signup">こちら</a>
-    </p>
-</form>
+<div class="login-container">
+  <form action="./login" method="POST">
+    <h2>ログイン</h2>
+      {{ form.hidden_tag() }}
+      <div class="login-form">
+      {{ form.email.label }}<br>
+      {{ form.email(size=32) }}<br>
+      {{ form.password.label }}<br>
+      {{ form.password(size=32) }}<br>
+      </div>
+      <div class="login-button">
+      {{ form.submit() }}<br>
+      </div>
+      登録がまだの方は<a href="./signup">こちら</a>
+  </form>
+</div>
 {% endblock%}
