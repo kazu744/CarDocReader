@@ -12,4 +12,9 @@
 </p>
 
 <h2>使用技術</h2>
+Python(Flask)
+HTML
+CSS
+
+<h2></h2>
 
