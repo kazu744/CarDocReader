@@ -15,6 +15,10 @@
 Python(Flask)
 HTML
 CSS
+Javascript
+MySQL
+OpenAI API
+Google Cloud Vision API
 
 <h2></h2>
 
