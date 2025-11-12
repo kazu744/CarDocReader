@@ -16,6 +16,7 @@ from app.utils.encryption import encrypt_api_key, decrypt_api_key
 
 
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 app.config["FERNET_KEY"] = settings.FERNET_KEY
 app.fernet = Fernet(app.config["FERNET_KEY"])
@@ -248,3 +249,7 @@ def export():
         filename  = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         
         return send_file(output, download_name=filename, as_attachment=True, mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
