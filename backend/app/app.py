@@ -87,8 +87,8 @@ def profile():
 def profile_edit():
     form = ProfileEditForm(obj=current_user)
 
-    vision_api_encrypted = encrypt_api_key(form.vision_api.data)
-    openai_api_encrypted = encrypt_api_key(form.openai_api.data)
+    vision_api_encrypted = encrypt_api_key(form.vision_api.data) if form.vision_api.data else None
+    openai_api_encrypted = encrypt_api_key(form.openai_api.data) if form.openai_api.data else None
 
     if form.validate_on_submit():
         form.populate_obj(current_user)
