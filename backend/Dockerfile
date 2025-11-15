@@ -26,3 +26,5 @@ RUN pip install --upgrade pip && \
         app-user
 
 USER app-user
+
+CMD ["gunicorn", "--config", "app/gunicorn_config.py", "app.app:app"]

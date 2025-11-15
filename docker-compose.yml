@@ -42,7 +42,7 @@ services:
       - 5000:5000
     volumes:
       - ./backend:/app
-    command: flask run
+    command: gunicorn --config app/gunicorn_config.py app.app:app
     depends_on:
       mysql:
         condition: service_healthy
