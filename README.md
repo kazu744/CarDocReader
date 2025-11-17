@@ -2,6 +2,7 @@
 自動車の登録手続きに必要な書類をGoogle Vision APIのOCR機能で読み取り、OpenAIのAPIを使って形式を整えて、エクセルにダウンロードできるWebアプリケーションです。
 
 ## サービスのURL
+<a href="https://cardocreader.com/login">https://cardocreader.com</a>
 
 ## 開発理由
 私は現在、自動車の登録を専門とする行政書士事務所に事務員として勤務しています。<br>
