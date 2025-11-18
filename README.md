@@ -1,8 +1,12 @@
 # CarDoc Reader
-自動車の登録手続きに必要な書類をGoogle Vision APIのOCR機能で読み取り、OpenAIのAPIを使って形式を整えて、エクセルにダウンロードできるWebアプリケーションです。
+自動車の登録手続きに必要な書類をGoogle Cloud Vision APIのOCR機能で読み取り、OpenAIのAPIを使って形式を整えて、エクセルにダウンロードできるWebアプリケーションです。
 
 ## サービスのURL
-https://cardocreader.com
+https://cardocreader.com/login<br>
+
+下記の情報でログインしてご利用いただけます。<br>
+test1@example.com<br>
+Test1234<br>
 
 ## 開発理由
 私は現在、自動車の登録を専門とする行政書士事務所に事務員として勤務しています。<br>
@@ -18,8 +22,39 @@ Category | Technology Stack
 データベース | MySQL
 環境構築 | Docker
 インフラ | AWS
-API | OpenAI API, Google Cloud Vision API
+API | OpenAI, Google Cloud Vision
 etc. | Git, Github
+
+## ER図
+```mermaid
+
+erDiagram
+    users ||--o{ ocrs : ""
+
+users {
+    int id PK "ID"
+    varchar(255) email "メールアドレス"
+    varchar(255) password_hash "パスワード"
+    text vision_api "Google Cloud Vision APIキー"
+    text openai_api "OpenAI APIキー"
+    dtetime created_at "作成日時"
+    datetime update_at "更新日時"
+    datetime deleted_at "削除日時"
+}
+
+ocrs {
+    int id PK "ID"
+    int user_id FK "ユーザーID"
+    varchar(255) new_owner_name "新所有者氏名"
+    varchar(255) new_owner_address_main "新所有者住所"
+    varchar(255) new_owner_address_street "新所有者丁目"
+    varchar(255) new_owner_address_number "新所有者番地"
+    datetime created_at "作成日時"
+    datetime update_at "更新日時"
+    datetime deleted_at "削除日時"
+}
+```
+
 
 ## 機能一覧
 - ログイン
