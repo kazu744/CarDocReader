@@ -47,7 +47,7 @@ ocrs {
     int user_id FK "ユーザーID"
     varchar(255) new_owner_name "新所有者氏名"
     varchar(255) new_owner_address_main "新所有者住所"
-    varchar(255) new_owner_address_street "新所有者丁目"
+    int new_owner_address_street "新所有者丁目"
     varchar(255) new_owner_address_number "新所有者番地"
     datetime created_at "作成日時"
     datetime update_at "更新日時"
@@ -67,8 +67,6 @@ ocrs {
 ## 今後の展望
 - フロントエンドの充実<br>
   必要最低限しか実装していないので、より使いやすいUIを目指す。
-- セキュリティの強化<br>
-  APIを使って個人情報を読み取るのはリスクが高いのでローカルLLMを使うことを検討する。<br>
-  また、実際に導入する前に会社のシステム部に相談する。<br>
+- CI/CDを導入<br>
 - OCRできる書類の追加<br>
   現在は印鑑証明しかできませんが、車検証や車庫証明などもOCRできるようにする
