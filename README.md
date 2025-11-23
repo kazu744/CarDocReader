@@ -21,7 +21,7 @@ Category | Technology Stack
 フロントエンド | HTML, CSS, JavaScript
 データベース | MySQL
 環境構築 | Docker
-インフラ | AWS
+インフラ | Amazon Web Service
 API | OpenAI, Google Cloud Vision
 etc. | Git, Github
 
